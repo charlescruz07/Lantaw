@@ -65,7 +65,7 @@ public class PagerTopFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if(movie!=null){
-            Glide.with(getContext()).load(Integer.parseInt(movie.getMovieImg())).into(movieImg);
+            Glide.with(getContext()).load(movie.getMovieImg()).into(movieImg);
             movieTitle.setText(movie.getMovieTitle());
         }
     }
