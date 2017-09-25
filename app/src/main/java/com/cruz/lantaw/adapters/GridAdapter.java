@@ -18,11 +18,13 @@ import java.util.ArrayList;
 
 public class GridAdapter extends BaseAdapter {
 
-    private int movies[];
+    private String movies[];
     private Context context;
     private LayoutInflater layoutInflater;
 
-    public GridAdapter(int movies[], Context context) {
+    public static final String TAG = "movies";
+
+    public GridAdapter(String movies[], Context context) {
         this.movies = movies;
         this.context = context;
     }
