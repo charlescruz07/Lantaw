@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -18,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.cruz.lantaw.Paginator.Paginator;
 import com.cruz.lantaw.R;
 import com.cruz.lantaw.Singleton.AppSingleton;
 import com.cruz.lantaw.activities.MovieInfoActivity;
@@ -38,6 +41,7 @@ public class UpcomingFragment extends Fragment {
     String slugs[];
     String titles[];
     GridAdapter adapter;
+//    int page = 0;
     String poster_image_thumbnails[];
 
 
@@ -45,6 +49,11 @@ public class UpcomingFragment extends Fragment {
 
     private View rootView;
     private GridView gridView;
+
+//    private Button nextBtn, prevBtn;
+//    Paginator p = new Paginator();
+//    private int totalPages;
+//    private int currentPage = 0;
 
     public UpcomingFragment() {
         // Required empty public constructor
@@ -59,6 +68,12 @@ public class UpcomingFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_upcoming, container, false);
 
         gridView = rootView.findViewById(R.id.gridView);
+
+//        nextBtn = rootView.findViewById(R.id.nextBtn);
+//        prevBtn = rootView.findViewById(R.id.prevBtn);
+//
+//        prevBtn.setEnabled(false);
+
 
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -99,8 +114,6 @@ public class UpcomingFragment extends Fragment {
                     titles = new String[obj.length()];
                     poster_image_thumbnails = new String[obj.length()];
 
-                    adapter = new GridAdapter(movies,getContext());
-                    gridView.setAdapter(adapter);
                     for (int i = 0; i < obj.length(); i++) {
 
                         JSONObject jsonObject = obj.getJSONObject(i);
@@ -118,8 +131,41 @@ public class UpcomingFragment extends Fragment {
 
 
                     }
+                    adapter = new GridAdapter(movies,getContext());
+                    adapter = new GridAdapter(movies,getContext());
+//                    gridView.setAdapter(adapter);
 
-                    Log.d(TAG, movies[0]);
+//                    gridView.setAdapter(new GridAdapter(p.generatePage(currentPage, movies),getContext()));
+
+//                    totalPages = movies.length / p.ITEMS_PER_PAGE;
+//
+//                    nextBtn.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            page += 9;
+//                            volleyStringRequst("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
+//
+//                            currentPage += 1;
+//                            adapter = new GridAdapter(movies,getContext());
+//                            gridView.setAdapter(new GridAdapter(p.generatePage(currentPage, movies),getContext()));
+//                            toggleButtons();
+//                        }
+//                    });
+//
+//                    prevBtn.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            page -= 9;
+//                            volleyStringRequst("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
+//
+//                            currentPage -= 1;
+//                            adapter = new GridAdapter(movies,getContext());
+//                            gridView.setAdapter(new GridAdapter(p.generatePage(currentPage, movies),getContext()));
+//                            toggleButtons();
+//                        }
+//                    });
+
+                    Log.d(TAG, movies[1]);
 
 
 
@@ -141,5 +187,22 @@ public class UpcomingFragment extends Fragment {
         AppSingleton.getInstance(getContext()).addToRequestQueue(jsonObjReq, REQUEST_TAG);
         progressDialog.hide();
     }
+
+//    private void toggleButtons(){
+//        if (currentPage == totalPages){
+//            nextBtn.setEnabled(false);
+//            prevBtn.setEnabled(true);
+//        }else{
+//            if (currentPage==0){
+//                prevBtn.setEnabled(false);
+//                nextBtn.setEnabled(true);
+//            }else{
+//                if (currentPage >= 1){
+//                    nextBtn.setEnabled(true);
+//                    prevBtn.setEnabled(true);
+//                }
+//            }
+//        }
+//    }
 
 }

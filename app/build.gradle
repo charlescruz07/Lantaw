@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
@@ -34,6 +35,9 @@ dependencies {
     compile 'com.github.qs-lll:ExpandingPager:767ff93966'
     compile 'com.github.johnkil.android-robototextview:robototextview:2.5.0'
     compile 'com.android.volley:volley:1.0.0'
-
+    compile 'com.google.android.gms:play-services-auth:9.2.1'
     testCompile 'junit:junit:4.12'
 }
+
+
+apply plugin: 'com.google.gms.google-services'
