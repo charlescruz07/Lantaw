@@ -11,4 +11,11 @@
     <string name="saved">SAVED</string>
     <string name="showing">SHOWING</string>
     <string name="read_more"><u>Read More</u></string>
+
+    <!-- for gmail log in-->
+    <string name="action_settings">Settings</string>
+
+    <!-- Button text -->
+    <string name="btn_logout_from_google">Logout from Google</string>
+    <string name="btn_revoke_access">Revoke Access</string>
 </resources>

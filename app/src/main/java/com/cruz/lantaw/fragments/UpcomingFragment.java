@@ -1,19 +1,34 @@
 package com.cruz.lantaw.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.cruz.lantaw.Paginator.Paginator;
 import com.cruz.lantaw.R;
+import com.cruz.lantaw.Singleton.AppSingleton;
 import com.cruz.lantaw.activities.MovieInfoActivity;
 import com.cruz.lantaw.adapters.GridAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,29 +36,24 @@ import com.cruz.lantaw.adapters.GridAdapter;
 public class UpcomingFragment extends Fragment {
 
 
-    private int movies[] = {
-            R.drawable.movie_9,
-            R.drawable.movie_8,
-            R.drawable.movie_7,
-            R.drawable.movie_6,
-            R.drawable.movie_5,
-            R.drawable.movie_4,
-            R.drawable.movie_3,
-            R.drawable.movie_2,
-            R.drawable.movie_1,
-            R.drawable.movie_9,
-            R.drawable.movie_8,
-            R.drawable.movie_7,
-            R.drawable.movie_6,
-            R.drawable.movie_5,
-            R.drawable.movie_4,
-            R.drawable.movie_3,
-            R.drawable.movie_2,
-            R.drawable.movie_1
-    };
+    String movies[];
+    String ids[];
+    String slugs[];
+    String titles[];
+    GridAdapter adapter;
+//    int page = 0;
+    String poster_image_thumbnails[];
+
+
+    public static final String TAG = "movies";
 
     private View rootView;
     private GridView gridView;
+
+//    private Button nextBtn, prevBtn;
+//    Paginator p = new Paginator();
+//    private int totalPages;
+//    private int currentPage = 0;
 
     public UpcomingFragment() {
         // Required empty public constructor
@@ -54,19 +64,145 @@ public class UpcomingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        volleyStringRequst("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
         rootView = inflater.inflate(R.layout.fragment_upcoming, container, false);
 
         gridView = rootView.findViewById(R.id.gridView);
-        GridAdapter adapter = new GridAdapter(movies,getContext());
-        gridView.setAdapter(adapter);
+
+//        nextBtn = rootView.findViewById(R.id.nextBtn);
+//        prevBtn = rootView.findViewById(R.id.prevBtn);
+//
+//        prevBtn.setEnabled(false);
+
+
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                startActivity(new Intent(getActivity(), MovieInfoActivity.class));
+                Intent intent = new Intent(getActivity(), MovieInfoActivity.class);
+                intent.putExtra("id", ids[i]);
+                startActivity(intent);
             }
         });
 
         return rootView;
     }
+
+    public void volleyStringRequst(String url){
+
+        String  REQUEST_TAG = "com.androidtutorialpoint.volleyStringRequest";
+        ProgressDialog progressDialog = new ProgressDialog(getContext());;
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                url, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d(TAG, response.toString());
+
+
+
+                try {
+                    // Parsing json object response
+                    // response will be a json object
+                    JSONArray obj = response.getJSONArray("movies");
+                    movies = new String[obj.length()];
+                    ids = new String[obj.length()];
+                    slugs = new String[obj.length()];
+                    titles = new String[obj.length()];
+                    poster_image_thumbnails = new String[obj.length()];
+
+                    for (int i = 0; i < obj.length(); i++) {
+
+                        JSONObject jsonObject = obj.getJSONObject(i);
+                        String slug = jsonObject.getString("slug");
+                        String title = jsonObject.getString("title");
+                        String poster_image_thumbnail = jsonObject.getString("poster_image_thumbnail");
+                        poster_image_thumbnail = poster_image_thumbnail.replace("http", "https");
+                        String id = jsonObject.getString("id");
+
+                        movies[i] = poster_image_thumbnail;
+                        ids[i] = id;
+                        slugs[i] = slug;
+                        titles[i] = title;
+                        poster_image_thumbnails[i] = poster_image_thumbnail;
+
+
+                    }
+                    adapter = new GridAdapter(movies,getContext());
+                    adapter = new GridAdapter(movies,getContext());
+//                    gridView.setAdapter(adapter);
+
+//                    gridView.setAdapter(new GridAdapter(p.generatePage(currentPage, movies),getContext()));
+
+//                    totalPages = movies.length / p.ITEMS_PER_PAGE;
+//
+//                    nextBtn.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            page += 9;
+//                            volleyStringRequst("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
+//
+//                            currentPage += 1;
+//                            adapter = new GridAdapter(movies,getContext());
+//                            gridView.setAdapter(new GridAdapter(p.generatePage(currentPage, movies),getContext()));
+//                            toggleButtons();
+//                        }
+//                    });
+//
+//                    prevBtn.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            page -= 9;
+//                            volleyStringRequst("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
+//
+//                            currentPage -= 1;
+//                            adapter = new GridAdapter(movies,getContext());
+//                            gridView.setAdapter(new GridAdapter(p.generatePage(currentPage, movies),getContext()));
+//                            toggleButtons();
+//                        }
+//                    });
+
+                    Log.d(TAG, movies[1]);
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(),
+                            "Error: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+            }
+        });
+        // Adding String request to request queue
+        AppSingleton.getInstance(getContext()).addToRequestQueue(jsonObjReq, REQUEST_TAG);
+        progressDialog.hide();
+    }
+
+//    private void toggleButtons(){
+//        if (currentPage == totalPages){
+//            nextBtn.setEnabled(false);
+//            prevBtn.setEnabled(true);
+//        }else{
+//            if (currentPage==0){
+//                prevBtn.setEnabled(false);
+//                nextBtn.setEnabled(true);
+//            }else{
+//                if (currentPage >= 1){
+//                    nextBtn.setEnabled(true);
+//                    prevBtn.setEnabled(true);
+//                }
+//            }
+//        }
+//    }
 
 }

@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame,new SavedFragment())
+                .replace(R.id.frame,new UpcomingFragment())
                 .commit();
     }
 
