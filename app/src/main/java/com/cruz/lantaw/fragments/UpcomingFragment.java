@@ -2,7 +2,10 @@ package com.cruz.lantaw.fragments;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -64,6 +67,11 @@ public class UpcomingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        ProgressDialog dialog=new ProgressDialog(getActivity());
+        dialog.setMessage("message");
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.show();
         volleyStringRequst("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
         rootView = inflater.inflate(R.layout.fragment_upcoming, container, false);
 
@@ -79,11 +87,18 @@ public class UpcomingFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), MovieInfoActivity.class);
-                intent.putExtra("id", ids[i]);
-                startActivity(intent);
+
+                if(!isNetworkAvailable()){
+                    Toast.makeText(getContext(), "Network is not enabled!", Toast.LENGTH_SHORT).show();
+                }else {
+                    Intent intent = new Intent(getActivity(), MovieInfoActivity.class);
+                    intent.putExtra("id", ids[i]);
+                    startActivity(intent);
+                }
+
             }
         });
+        dialog.hide();
 
         return rootView;
     }
@@ -204,5 +219,12 @@ public class UpcomingFragment extends Fragment {
 //            }
 //        }
 //    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 }

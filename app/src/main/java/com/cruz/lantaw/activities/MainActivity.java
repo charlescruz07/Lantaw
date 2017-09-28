@@ -19,13 +19,21 @@ import com.cruz.lantaw.R;
 import com.cruz.lantaw.fragments.SavedFragment;
 import com.cruz.lantaw.fragments.ShowingFragment;
 import com.cruz.lantaw.fragments.UpcomingFragment;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.firebase.auth.FirebaseAuth;
 import com.qslll.library.fragments.ExpandingFragment;
 
-public class MainActivity extends AppCompatActivity implements ExpandingFragment.OnExpandingClickListener {
+public class MainActivity extends AppCompatActivity implements ExpandingFragment.OnExpandingClickListener,GoogleApiClient.OnConnectionFailedListener  {
 
     private Toolbar toolbar;
     private BottomNavigationView bottomNavigationView;
     private FrameLayout frame;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +48,26 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
         initToolbar();
         initBottomNavigation();
 
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signOut();
+            }
+        });
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.frame,new UpcomingFragment())
                 .commit();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
     }
 
     private void findViews() {
@@ -57,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+
     }
 
     private void initBottomNavigation(){
@@ -105,5 +130,16 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void signOut() {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(MainActivity.this,LoginActivity.class));
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

@@ -40,6 +40,7 @@ public class MovieInfoActivity extends AppCompatActivity {
     private TextView mTvsypno;
     private ImageView mImgImage;
     private ImageView mImgPlay;
+    private ProgressDialog progressDialog;
 
 
     public static final String TAG = "movieinfoactivity";
@@ -48,6 +49,11 @@ public class MovieInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
 
         if(!isNetworkAvailable()){
             Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
@@ -72,6 +78,8 @@ public class MovieInfoActivity extends AppCompatActivity {
         volleyStringRequst("https://api.cinepass.de/v4/movies/"+id+"/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
 
         Log.e(TAG, "onCreate: " + id );
+
+
     }
 
     @Override
@@ -80,9 +88,7 @@ public class MovieInfoActivity extends AppCompatActivity {
         return true;
     }
     public void volleyStringRequst(String url){
-        ProgressDialog dialog = new ProgressDialog(MovieInfoActivity.this);
-        dialog.setMessage("Your message..");
-        dialog.show();
+
 
         this.mTvTitle = (TextView)findViewById(R.id.movieTitle);
         this.mTvCast = (TextView)findViewById(R.id.movieCast);
@@ -228,7 +234,7 @@ public class MovieInfoActivity extends AppCompatActivity {
         });
         // Adding String request to request queue
         AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjReq, REQUEST_TAG);
-        dialog.dismiss();
+        progressDialog.hide();
     }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager

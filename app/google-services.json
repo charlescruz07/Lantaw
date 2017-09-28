@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "620954201245",
-    "project_id": "my-project-151421"
+    "firebase_url": "https://my-project-151421.firebaseio.com",
+    "project_id": "my-project-151421",
+    "storage_bucket": "my-project-151421.appspot.com"
   },
   "client": [
     {
@@ -12,6 +14,10 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "620954201245-ainjnkq088e080droj1j8mgn69ikbo96.apps.googleusercontent.com",
+          "client_type": 3
+        },
         {
           "client_id": "620954201245-ct606bvhvff7fr09ms08khemhdg15th6.apps.googleusercontent.com",
           "client_type": 1,
@@ -35,11 +41,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "620954201245-ainjnkq088e080droj1j8mgn69ikbo96.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
