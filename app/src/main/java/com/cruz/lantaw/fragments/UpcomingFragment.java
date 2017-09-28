@@ -131,9 +131,9 @@ public class UpcomingFragment extends Fragment {
 
 
                     }
+//                    adapter = new GridAdapter(movies,getContext());
                     adapter = new GridAdapter(movies,getContext());
-                    adapter = new GridAdapter(movies,getContext());
-//                    gridView.setAdapter(adapter);
+                    gridView.setAdapter(adapter);
 
 //                    gridView.setAdapter(new GridAdapter(p.generatePage(currentPage, movies),getContext()));
 

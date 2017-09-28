@@ -141,6 +141,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgProfilePic);
 
+//            updateUI(true);
             startActivity(new Intent(LoginActivity.this,MainActivity.class));
             finish();
 
