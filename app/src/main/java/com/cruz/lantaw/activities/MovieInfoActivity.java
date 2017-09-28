@@ -1,7 +1,10 @@
 package com.cruz.lantaw.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -46,6 +49,9 @@ public class MovieInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(!isNetworkAvailable()){
+            Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
+        }
         String id= getIntent().getStringExtra("id");
 
         setContentView(R.layout.activity_movie_info);
@@ -111,53 +117,21 @@ public class MovieInfoActivity extends AppCompatActivity {
 
 //                    JSONObject age_limits = obj.getJSONObject("age_limits");
 //                    int DE = age_limits.getInt("SE");
-
+                    String date;
                     JSONObject release_dates = obj.getJSONObject("release_dates");
-                    JSONArray PT = release_dates.getJSONArray("PT");
-                    if (PT.length() == 0){
-                        PT = release_dates.getJSONArray("IT");
-                        if (PT.length() == 0){
-                            PT = release_dates.getJSONArray("DK");
-                            if (PT.length() == 0){
-                                PT = release_dates.getJSONArray("AE");
-                                if (PT.length() == 0){
-                                    PT = release_dates.getJSONArray("DE");
-                                    if (PT.length() == 0){
-                                        PT = release_dates.getJSONArray("BR");
-                                        if (PT.length() == 0){
-                                            PT = release_dates.getJSONArray("UA");
-                                            if (PT.length() == 0){
-                                                PT = release_dates.getJSONArray("ES");
-                                                if (PT.length() == 0){
-                                                    PT = release_dates.getJSONArray("US");
-                                                    if (PT.length() == 0){
-                                                        PT = release_dates.getJSONArray("CH");
-                                                        if (PT.length() == 0){
-                                                            PT = release_dates.getJSONArray("SE");
-                                                            if (PT.length() == 0){
-                                                                PT = release_dates.getJSONArray("GB");
-                                                                if (PT.length() == 0){
-                                                                    PT = release_dates.getJSONArray("RU");
-                                                                    if (PT.length() == 0){
-                                                                        PT = release_dates.getJSONArray("FR");
-                                                                        if (PT.length() == 0){
-                                                                            PT = release_dates.getJSONArray("IE");
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    if (!release_dates.has("SE")){
+//                        Toast.makeText(MovieInfoActivity.this, "naa if", Toast.LENGTH_SHORT).show();
+                        date = "Not yet released in Philippines";
                     }
-                    JSONObject dateT = PT.getJSONObject(0);
-                    String date = dateT.getString("date");
+                    else {
+//                        Toast.makeText(MovieInfoActivity.this, "naa ele", Toast.LENGTH_SHORT).show();
+
+                        JSONArray PT = release_dates.getJSONArray("SE");
+                        JSONObject dateT = PT.getJSONObject(0);
+                        date = dateT.getString("date");
+                    }
+
+
 
                     JSONArray crew = obj.getJSONArray("crew");
                     JSONObject crewT = crew.getJSONObject(0);
@@ -167,19 +141,26 @@ public class MovieInfoActivity extends AppCompatActivity {
 
                     JSONArray cast = obj.getJSONArray("cast");
 
-                    JSONArray trailers = obj.getJSONArray("trailers");
+                    String url = "";
+                    if (obj.isNull("trailers")){
+                        Toast.makeText(MovieInfoActivity.this, "No Trailer available", Toast.LENGTH_SHORT).show();
+                        url = "";
+                    }else {
+//                        Toast.makeText(MovieInfoActivity.this, "naa elle", Toast.LENGTH_SHORT).show();
+                        JSONArray trailers = obj.getJSONArray("trailers");
+                        JSONObject jsonObjectTrailer = trailers.getJSONObject(0);
+                        JSONArray trailer_files = jsonObjectTrailer.getJSONArray("trailer_files");
+                        JSONObject jsonObjecttrailer_files = trailer_files.getJSONObject(0);
 
-                    JSONObject jsonObjectTrailer = trailers.getJSONObject(0);
+                        url = jsonObjecttrailer_files.getString("url");
+                    }
 
-                    JSONArray trailer_files = jsonObjectTrailer.getJSONArray("trailer_files");
-                    JSONObject jsonObjecttrailer_files = trailer_files.getJSONObject(0);
 
-                    final String url = jsonObjecttrailer_files.getString("url");
-
+                    final String finalUrl = url;
                     mImgPlay.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl)));
                         }
                     });
 
@@ -231,22 +212,27 @@ public class MovieInfoActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     mRbRatingBar.setRating(Float.parseFloat(0+""));
-                    Toast.makeText(getApplicationContext(),
-                            "Error: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(),
+//                            "Error: " + e.getMessage(),
+//                            Toast.LENGTH_LONG).show();
                 }
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
+//                VolleyLog.d(TAG, "Error: " + error.getMessage());
             }
         });
         // Adding String request to request queue
         AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjReq, REQUEST_TAG);
         dialog.dismiss();
     }
-
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 }

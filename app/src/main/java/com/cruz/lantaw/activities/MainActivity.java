@@ -1,6 +1,9 @@
 package com.cruz.lantaw.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +31,10 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(!isNetworkAvailable()){
+            Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
+        }
 
         findViews();
         initToolbar();
@@ -92,5 +99,11 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
     @Override
     public void onExpandingClick(View view) {
         startActivity(new Intent(this, MovieInfoActivity.class));
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
