@@ -145,6 +145,7 @@ public class MovieInfoActivity extends AppCompatActivity {
                     if (obj.isNull("trailers")){
                         Toast.makeText(MovieInfoActivity.this, "No Trailer available", Toast.LENGTH_SHORT).show();
                         url = "";
+                        mImgPlay.setEnabled(false);
                     }else {
 //                        Toast.makeText(MovieInfoActivity.this, "naa elle", Toast.LENGTH_SHORT).show();
                         JSONArray trailers = obj.getJSONArray("trailers");
@@ -153,6 +154,7 @@ public class MovieInfoActivity extends AppCompatActivity {
                         JSONObject jsonObjecttrailer_files = trailer_files.getJSONObject(0);
 
                         url = jsonObjecttrailer_files.getString("url");
+                        mImgPlay.setEnabled(true);
                     }
 
 
