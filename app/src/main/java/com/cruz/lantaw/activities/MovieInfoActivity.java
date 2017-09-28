@@ -1,5 +1,7 @@
 package com.cruz.lantaw.activities;
 
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -7,10 +9,12 @@ import android.view.Menu;
 import android.view.View;
 
 import com.cruz.lantaw.R;
+import com.cruz.lantaw.fragments.ReviewFragment;
 
 public class MovieInfoActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,15 @@ public class MovieInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                ReviewFragment myDialog = new ReviewFragment();
+                myDialog.show(fragmentManager, "dialog");
             }
         });
     }
