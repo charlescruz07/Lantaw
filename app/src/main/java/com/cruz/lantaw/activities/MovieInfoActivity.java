@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +27,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.cruz.lantaw.R;
 import com.cruz.lantaw.Singleton.AppSingleton;
+import com.cruz.lantaw.fragments.ReviewFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +44,7 @@ public class MovieInfoActivity extends AppCompatActivity {
     private ImageView mImgImage;
     private ImageView mImgPlay;
     private ProgressDialog progressDialog;
+    private FloatingActionButton fab;
 
 
     public static final String TAG = "movieinfoactivity";
@@ -76,6 +80,16 @@ public class MovieInfoActivity extends AppCompatActivity {
         });
 
         volleyStringRequst("https://api.cinepass.de/v4/movies/"+id+"/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                ReviewFragment myDialog = new ReviewFragment();
+                myDialog.show(fragmentManager, "dialog");
+            }
+        });
 
         Log.e(TAG, "onCreate: " + id );
 
