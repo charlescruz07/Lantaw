@@ -63,7 +63,6 @@ public class MovieInfoActivity extends AppCompatActivity {
         }
         String id= getIntent().getStringExtra("id");
         setContentView(R.layout.activity_movie_info);
-        Toast.makeText(getBaseContext(),"ID: "+id,Toast.LENGTH_LONG).show();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
