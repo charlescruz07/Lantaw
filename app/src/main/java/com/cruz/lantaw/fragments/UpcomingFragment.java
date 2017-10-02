@@ -13,8 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -23,7 +21,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.cruz.lantaw.Paginator.Paginator;
 import com.cruz.lantaw.R;
 import com.cruz.lantaw.Singleton.AppSingleton;
 import com.cruz.lantaw.activities.MovieInfoActivity;
@@ -52,6 +49,7 @@ public class UpcomingFragment extends Fragment {
 
     private View rootView;
     private GridView gridView;
+
 
 //    private Button nextBtn, prevBtn;
 //    Paginator p = new Paginator();
@@ -138,12 +136,11 @@ public class UpcomingFragment extends Fragment {
                         poster_image_thumbnail = poster_image_thumbnail.replace("http", "https");
                         String id = jsonObject.getString("id");
 
-                        movies[i] = poster_image_thumbnail;
-                        ids[i] = id;
-                        slugs[i] = slug;
-                        titles[i] = title;
-                        poster_image_thumbnails[i] = poster_image_thumbnail;
-
+                            movies[i] = poster_image_thumbnail;
+                            ids[i] = id;
+                            slugs[i] = slug;
+                            titles[i] = title;
+                            poster_image_thumbnails[i] = poster_image_thumbnail;
 
                     }
 //                    adapter = new GridAdapter(movies,getContext());

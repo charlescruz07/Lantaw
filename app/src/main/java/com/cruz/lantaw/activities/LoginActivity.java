@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -79,6 +78,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }else {
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
             startActivityForResult(signInIntent, RC_SIGN_IN);
+//            String id= getIntent().getStringExtra("mes");
+//            Intent intent = new Intent(getBaseContext(), MovieInfoActivity.class);
+//            intent.putExtra("id", id);
+//            startActivity(intent);
+
         }
 
     }
