@@ -12,6 +12,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,12 +22,28 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.cruz.lantaw.R;
+import com.cruz.lantaw.activities.MovieInfoActivity;
 import com.cruz.lantaw.adapters.ReviewAdapter;
 import com.cruz.lantaw.models.Review;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.lang.ref.Reference;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class ReviewFragment extends DialogFragment {
@@ -39,6 +56,17 @@ public class ReviewFragment extends DialogFragment {
     private EditText etTxt;
     private ProgressBar progressBar;
     private View rootView;
+    private int id;
+    private String userName;
+    private String comment;
+    private String time;
+    private Review review;
+
+    public static final String TAG = "movies";
+
+
+    private DatabaseReference myRef;
+    private FirebaseUser user;
 
     public void findViews(){
         reviews = new ArrayList<>();
@@ -67,6 +95,43 @@ public class ReviewFragment extends DialogFragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_review, container, false);
         findViews();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        review = new Review();
+
+        myRef = database.getReference("posts");
+        Bundle bundle = this.getArguments();
+        id = bundle.getInt("id");
+
+        getReviews();
+        if (user != null) {
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+            Uri photoUrl = user.getPhotoUrl();
+            String uid = user.getUid();
+
+            Log.e(TAG, "Logged in user: " + name + "\n" + email + "\n" + photoUrl);
+        } else {
+            // No user is signed in
+        }
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Date currentTime = Calendar.getInstance().getTime();
+                user = FirebaseAuth.getInstance().getCurrentUser();
+                if (etTxt.getText().toString().isEmpty()){
+                    Toast.makeText(getActivity(), "Invalid empty comment", Toast.LENGTH_SHORT).show();
+
+                }else {
+                    writeNewPost(user.getPhotoUrl().toString(), user.getDisplayName(), etTxt.getText().toString(), currentTime.toString(), ""+id);
+                    Log.e(TAG, "Saved: "+ user.getPhotoUrl().toString() +"\n"+ user.getDisplayName() +"\n"+ etTxt.getText().toString()+"\n"+
+                            currentTime.toString() +"\n"+ ""+id);
+                    etTxt.setText("");
+                }
+            }
+        });
         return rootView;
     }
 
@@ -83,24 +148,54 @@ public class ReviewFragment extends DialogFragment {
 //                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
         getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        reviews = getReviews();
-        adapter = new ReviewAdapter(rootView.getContext(),reviews);
-        recyclerView.setAdapter(adapter);
-        progressBar.setVisibility(View.GONE);
+//        progressBar.setVisibility(View.GONE);
 
     }
 
-    public ArrayList<Review> getReviews(){
-        ArrayList<Review> reviews = new ArrayList<>();
 
-        reviews.add(new Review("wala","Charles Cruz","The movie was so good. Oh my god fuck shet","Yesterday"));
-        reviews.add(new Review("wala","Charles Cruz","The movie was so good. Oh my god fuck shet","Yesterday"));
-        reviews.add(new Review("wala","Charles Cruz","The movie was so good. Oh my god fuck shet","Yesterday"));
-        reviews.add(new Review("wala","Charles Cruz","The movie was so good. Oh my god fuck shet","Yesterday"));
-        reviews.add(new Review("wala","Charles Cruz","The movie was so good. Oh my god fuck shet","Yesterday"));
-        reviews.add(new Review("wala","Charles Cruz","The movie was so good. Oh my god fuck shet","Yesterday"));
+    private void writeNewPost(String userImage, String userName, String userComment, String time, String movieName) {
+        Review user = new Review(userImage, userName, userComment, time);
 
-        return reviews;
+        myRef.child("movie").child(movieName).push().setValue(user);
+    }
+
+    public void getReviews(){
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            public ArrayList<Review> reviews;
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                this.reviews = new ArrayList<>();
+                progressBar.setVisibility(View.VISIBLE);
+                for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
+                    Log.v(TAG,""+ childDataSnapshot.getKey().toString() + " una una una ");
+
+                    for (DataSnapshot childDataSnapshotChildre : childDataSnapshot.getChildren()) {
+                        if (childDataSnapshotChildre.getKey().toString().equals(String.valueOf(id))) {
+                            for (DataSnapshot childDataSnapshotChildren : childDataSnapshotChildre.getChildren()) {
+                                    Log.v(TAG, "naa "+String.valueOf(id)+" na movie");
+                                    Log.v(TAG, "" + childDataSnapshotChildren.getKey() + ": " + childDataSnapshotChildren.child("userName").getValue()); //displays the key for the node
+                                    this.reviews.add(new Review(childDataSnapshotChildren.child("userImage").getValue().toString(),
+                                            childDataSnapshotChildren.child("userName").getValue().toString(),
+                                            childDataSnapshotChildren.child("userComment").getValue().toString(),
+                                            childDataSnapshotChildren.child("time").getValue().toString()));
+                                }
+                        }
+                    }
+                }
+
+                adapter = new ReviewAdapter(rootView.getContext(),this.reviews);
+                recyclerView.setAdapter(adapter);
+                progressBar.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

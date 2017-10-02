@@ -28,6 +28,8 @@ import com.bumptech.glide.Glide;
 import com.cruz.lantaw.R;
 import com.cruz.lantaw.Singleton.AppSingleton;
 import com.cruz.lantaw.fragments.ReviewFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,7 +47,7 @@ public class MovieInfoActivity extends AppCompatActivity {
     private ImageView mImgPlay;
     private ProgressDialog progressDialog;
     private FloatingActionButton fab;
-
+    private String id;
 
     public static final String TAG = "movieinfoactivity";
 
@@ -53,6 +55,8 @@ public class MovieInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
@@ -62,7 +66,8 @@ public class MovieInfoActivity extends AppCompatActivity {
         if(!isNetworkAvailable()){
             Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
         }
-        String id= getIntent().getStringExtra("id");
+        id= getIntent().getStringExtra("id");
+        setId(id);
 
         setContentView(R.layout.activity_movie_info);
 
@@ -86,7 +91,10 @@ public class MovieInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
+                Bundle arguments = new Bundle();
+                arguments.putInt("id", getId());
                 ReviewFragment myDialog = new ReviewFragment();
+                myDialog.setArguments(arguments);
                 myDialog.show(fragmentManager, "dialog");
             }
         });
@@ -113,8 +121,6 @@ public class MovieInfoActivity extends AppCompatActivity {
         this.mImgPlay = (ImageView) findViewById(R.id.playBtn);
 
         String  REQUEST_TAG = "com.androidtutorialpoint.volleyStringRequest";
-//        progressDialog.setMessage("Loading...");
-//        progressDialog.show();
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 url, null, new Response.Listener<JSONObject>() {
@@ -140,11 +146,9 @@ public class MovieInfoActivity extends AppCompatActivity {
                     String date;
                     JSONObject release_dates = obj.getJSONObject("release_dates");
                     if (!release_dates.has("SE")){
-//                        Toast.makeText(MovieInfoActivity.this, "naa if", Toast.LENGTH_SHORT).show();
                         date = "Not yet released in Philippines";
                     }
                     else {
-//                        Toast.makeText(MovieInfoActivity.this, "naa ele", Toast.LENGTH_SHORT).show();
 
                         JSONArray PT = release_dates.getJSONArray("SE");
                         JSONObject dateT = PT.getJSONObject(0);
@@ -234,9 +238,6 @@ public class MovieInfoActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     mRbRatingBar.setRating(Float.parseFloat(0+""));
-//                    Toast.makeText(getApplicationContext(),
-//                            "Error: " + e.getMessage(),
-//                            Toast.LENGTH_LONG).show();
                 }
             }
         }, new Response.ErrorListener() {
@@ -257,4 +258,11 @@ public class MovieInfoActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    public int getId() {
+        return Integer.parseInt(id);
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

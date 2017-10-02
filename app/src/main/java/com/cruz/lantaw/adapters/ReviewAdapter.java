@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.cruz.lantaw.R;
 import com.cruz.lantaw.models.Review;
 
@@ -52,7 +54,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ViewHolder){
             ViewHolder viewHolder = (ViewHolder) holder;
-            //set image here
+            Glide.with(context).load(reviews.get(position).getUserImage()).into(viewHolder.userImage);
             viewHolder.userName.setText(reviews.get(position).getUserName());
             viewHolder.tvTime.setText(reviews.get(position).getTime());
             viewHolder.userComment.setText(reviews.get(position).getUserComment());
