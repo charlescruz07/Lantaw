@@ -45,9 +45,9 @@
                 android:id="@+id/playBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_play_circle_outline_white_30dp" />
+                android:src="@drawable/ic_play_circle_outline_white_30dp"
+                android:layout_alignParentRight="true" />
 
             <TextView
                 android:id="@+id/movieTitle"
@@ -96,6 +96,20 @@
         android:scaleX="0.7"
         android:scaleY="0.7"
         android:theme="@style/RatingBar" />
+
+    <Button
+        android:id="@+id/Save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/label"
+        android:layout_toRightOf="@+id/ratingBar"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="10dp"
+        android:isIndicator="true"
+        android:scaleX="0.9"
+        android:text="Save"
+        android:scaleY="0.9"
+        android:layout_alignParentRight="true" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -249,6 +263,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentRight="true" />
+
 
 </RelativeLayout>

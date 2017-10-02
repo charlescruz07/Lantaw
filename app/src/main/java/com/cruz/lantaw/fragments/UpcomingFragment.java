@@ -147,35 +147,6 @@ public class UpcomingFragment extends Fragment {
                     adapter = new GridAdapter(movies,getContext());
                     gridView.setAdapter(adapter);
 
-//                    gridView.setAdapter(new GridAdapter(p.generatePage(currentPage, movies),getContext()));
-
-//                    totalPages = movies.length / p.ITEMS_PER_PAGE;
-//
-//                    nextBtn.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            page += 9;
-//                            volleyStringRequst("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
-//
-//                            currentPage += 1;
-//                            adapter = new GridAdapter(movies,getContext());
-//                            gridView.setAdapter(new GridAdapter(p.generatePage(currentPage, movies),getContext()));
-//                            toggleButtons();
-//                        }
-//                    });
-//
-//                    prevBtn.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            page -= 9;
-//                            volleyStringRequst("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
-//
-//                            currentPage -= 1;
-//                            adapter = new GridAdapter(movies,getContext());
-//                            gridView.setAdapter(new GridAdapter(p.generatePage(currentPage, movies),getContext()));
-//                            toggleButtons();
-//                        }
-//                    });
 
                     Log.d(TAG, movies[1]);
 
@@ -200,23 +171,6 @@ public class UpcomingFragment extends Fragment {
         AppSingleton.getInstance(getContext()).addToRequestQueue(jsonObjReq, REQUEST_TAG);
         progressDialog.hide();
     }
-
-//    private void toggleButtons(){
-//        if (currentPage == totalPages){
-//            nextBtn.setEnabled(false);
-//            prevBtn.setEnabled(true);
-//        }else{
-//            if (currentPage==0){
-//                prevBtn.setEnabled(false);
-//                nextBtn.setEnabled(true);
-//            }else{
-//                if (currentPage >= 1){
-//                    nextBtn.setEnabled(true);
-//                    prevBtn.setEnabled(true);
-//                }
-//            }
-//        }
-//    }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager

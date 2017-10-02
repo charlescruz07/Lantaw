@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -27,8 +28,12 @@ import com.bumptech.glide.Glide;
 import com.cruz.lantaw.R;
 import com.cruz.lantaw.Singleton.AppSingleton;
 import com.cruz.lantaw.fragments.ReviewFragment;
+import com.cruz.lantaw.models.Movie;
+import com.cruz.lantaw.models.Review;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,18 +49,22 @@ public class MovieInfoActivity extends AppCompatActivity {
     private TextView mTvsypno;
     private ImageView mImgImage;
     private ImageView mImgPlay;
+    private Button mBtnSave;
     private ProgressDialog progressDialog;
     private FloatingActionButton fab;
     private String id;
 
+    private DatabaseReference myRef;
+
     public static final String TAG = "movieinfoactivity";
+    private FirebaseUser user;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("saved").child("user");
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
@@ -119,6 +128,7 @@ public class MovieInfoActivity extends AppCompatActivity {
         this.mTvsypno = (TextView)findViewById(R.id.synopsisTxt);
         this.mImgImage = (ImageView) findViewById(R.id.movieImg);
         this.mImgPlay = (ImageView) findViewById(R.id.playBtn);
+        this.mBtnSave = (Button) findViewById(R.id.Save);
 
         String  REQUEST_TAG = "com.androidtutorialpoint.volleyStringRequest";
 
@@ -136,7 +146,15 @@ public class MovieInfoActivity extends AppCompatActivity {
                     String title = obj.getString("original_title");
                     String synopsis = obj.getString("synopsis");
                     String runtime = obj.getString("runtime");
-                    String poster_image_thumbnail = obj.getString("poster_image_thumbnail");
+                    final String poster_image_thumbnail = obj.getString("poster_image_thumbnail");
+                    final String id = obj.getString("id");
+
+                    mBtnSave.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            saveMovie(poster_image_thumbnail, String.valueOf(id));
+                        }
+                    });
 
 
 
@@ -264,5 +282,12 @@ public class MovieInfoActivity extends AppCompatActivity {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    private void saveMovie(String movieId, String poster_image_thumbnail) {
+        Movie movie = new Movie(poster_image_thumbnail, movieId);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        myRef.child(user.getUid().toString()).push().setValue(movie);
     }
 }

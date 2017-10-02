@@ -8,12 +8,15 @@ import android.os.Parcelable;
  */
 
 public class Movie implements Parcelable{
+
     private String movieImg;
+    private String movieId;
     private String movieTitle;
     private String movieInfo;
 
-    public Movie(String movieImg, String movieTitle, String movieInfo) {
+    public Movie(String movieImg, String movieId, String movieTitle, String movieInfo) {
         this.movieImg = movieImg;
+        this.movieId = movieId;
         this.movieTitle = movieTitle;
         this.movieInfo = movieInfo;
     }
@@ -21,6 +24,11 @@ public class Movie implements Parcelable{
     protected Movie(Parcel in) {
         movieImg = in.readString();
         movieTitle = in.readString();
+    }
+
+    public Movie(String movieImg, String movieId) {
+        this.movieImg = movieImg;
+        this.movieId = movieId;
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -34,6 +42,12 @@ public class Movie implements Parcelable{
             return new Movie[size];
         }
     };
+
+    public Movie(String movieImg, String movieTitle, String movieInfo) {
+        this.movieImg = movieImg;
+        this.movieTitle = movieTitle;
+        this.movieInfo = movieInfo;
+    }
 
     public String getMovieImg() {
         return movieImg;
@@ -69,5 +83,14 @@ public class Movie implements Parcelable{
         parcel.writeString(movieImg);
         parcel.writeString(movieTitle);
         parcel.writeString(movieInfo);
+        parcel.writeString(movieId);
+    }
+
+    public String getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(String movieId) {
+        this.movieId = movieId;
     }
 }

@@ -1,15 +1,11 @@
 package com.cruz.lantaw.fragments;
 
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +21,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.cruz.lantaw.R;
 import com.cruz.lantaw.Singleton.AppSingleton;
 import com.cruz.lantaw.activities.MovieInfoActivity;
-import com.cruz.lantaw.adapters.GridAdapter;
 import com.cruz.lantaw.adapters.MovieViewPagerAdapter;
 import com.cruz.lantaw.models.Movie;
 import com.qslll.library.ExpandingPagerFactory;

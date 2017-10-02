@@ -39,15 +39,6 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
-
-//        OneSignal.startInit(this)
-//                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
-//                .unsubscribeWhenNotificationsAreDisabled(true)
-//                .init();
-
         if(!isNetworkAvailable()){
             Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
         }
