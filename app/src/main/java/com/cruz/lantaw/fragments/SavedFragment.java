@@ -44,7 +44,7 @@ import java.util.List;
 
 public class SavedFragment extends Fragment {
 
-    String ids[] = new String[11];
+    String ids[];
     String poster_image_thumbnails[];
     private DatabaseReference myRef;
     private FirebaseUser user;
@@ -113,9 +113,11 @@ public class SavedFragment extends Fragment {
                 Log.v(TAG,""+ j + " countj");
 
                 poster_image_thumbnails = new String[j];
+                ids = new String[j];
                 for (int i = 0; i < this.movie.size(); i++) {
                     Log.e(TAG, "onDataChange: " +this.movie.get(i).getMovieId().toString() );
                     poster_image_thumbnails[i] = this.movie.get(i).getMovieImg().toString();
+                    ids[i] = this.movie.get(i).getMovieId().toString();
                 }
                 adapter = new GridAdapter(poster_image_thumbnails,getContext());
                 gridView.setAdapter(adapter);
