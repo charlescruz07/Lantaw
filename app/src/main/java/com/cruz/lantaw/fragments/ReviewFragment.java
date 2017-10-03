@@ -92,7 +92,6 @@ public class ReviewFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_review, container, false);
         findViews();
 
@@ -113,7 +112,6 @@ public class ReviewFragment extends DialogFragment {
 
             Log.e(TAG, "Logged in user: " + name + "\n" + email + "\n" + photoUrl);
         } else {
-            // No user is signed in
         }
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,15 +138,7 @@ public class ReviewFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
         getDialog().setTitle("Shit");
 
-        // Show soft keyboard automatically and request focus to field
-//        mEditText = (EditText) view.findViewById(R.id.etText);
-//        mEditText.requestFocus();
-
-//        getDialog().getWindow().setSoftInputMode(
-//                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
         getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-//        progressBar.setVisibility(View.GONE);
 
     }
 
@@ -175,7 +165,7 @@ public class ReviewFragment extends DialogFragment {
                         if (childDataSnapshotChildre.getKey().toString().equals(String.valueOf(id))) {
                             for (DataSnapshot childDataSnapshotChildren : childDataSnapshotChildre.getChildren()) {
                                     Log.v(TAG, "naa "+String.valueOf(id)+" na movie");
-                                    Log.v(TAG, "" + childDataSnapshotChildren.getKey() + ": " + childDataSnapshotChildren.child("userName").getValue()); //displays the key for the node
+                                    Log.v(TAG, "" + childDataSnapshotChildren.getKey() + ": " + childDataSnapshotChildren.child("userName").getValue() + " reult"); //displays the key for the node
                                     this.reviews.add(new Review(childDataSnapshotChildren.child("userImage").getValue().toString(),
                                             childDataSnapshotChildren.child("userName").getValue().toString(),
                                             childDataSnapshotChildren.child("userComment").getValue().toString(),

@@ -284,10 +284,12 @@ public class MovieInfoActivity extends AppCompatActivity {
         this.id = id;
     }
 
-    private void saveMovie(String movieId, String poster_image_thumbnail) {
+    private void saveMovie(String poster_image_thumbnail, String movieId) {
         Movie movie = new Movie(poster_image_thumbnail, movieId);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         myRef.child(user.getUid().toString()).push().setValue(movie);
+//        myRef.child(user.getUid().toString()).child("name").setValue(user.getDisplayName().toString());
+
     }
 }

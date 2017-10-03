@@ -163,7 +163,7 @@ public class UpcomingFragment extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), "Network is too slow!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Network is too slow!", Toast.LENGTH_SHORT).show();
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
             }
         });
