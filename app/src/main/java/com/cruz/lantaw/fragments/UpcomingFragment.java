@@ -72,9 +72,8 @@ public class UpcomingFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ProgressDialog dialog=new ProgressDialog(getActivity());
-        dialog.setMessage("message");
+        dialog.setMessage("Loading Movies...");
         dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
         dialog.show();
 
 
