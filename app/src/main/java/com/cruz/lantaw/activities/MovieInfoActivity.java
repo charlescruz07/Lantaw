@@ -29,7 +29,6 @@ import com.cruz.lantaw.R;
 import com.cruz.lantaw.Singleton.AppSingleton;
 import com.cruz.lantaw.fragments.ReviewFragment;
 import com.cruz.lantaw.models.Movie;
-import com.cruz.lantaw.models.Review;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -38,6 +37,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 public class MovieInfoActivity extends AppCompatActivity {
 
@@ -71,7 +72,7 @@ public class MovieInfoActivity extends AppCompatActivity {
         progressDialog.setIndeterminate(true);
         progressDialog.show();
 
-        if(!isNetworkAvailable()){
+        if(!isOnline()){
             Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
         }
         id= getIntent().getStringExtra("id");
@@ -275,6 +276,19 @@ public class MovieInfoActivity extends AppCompatActivity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        }
+        catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
+    }
+
 
     public int getId() {
         return Integer.parseInt(id);

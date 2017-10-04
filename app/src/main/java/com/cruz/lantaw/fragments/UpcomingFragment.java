@@ -33,6 +33,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -97,7 +99,7 @@ public class UpcomingFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
 
-                if(!isNetworkAvailable()){
+                if(!isOnline()){
                     Toast.makeText(getContext(), "Network is not enabled!", Toast.LENGTH_SHORT).show();
                 } else {
 
@@ -231,5 +233,19 @@ public class UpcomingFragment extends Fragment {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        }
+        catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
+    }
+
 
 }
