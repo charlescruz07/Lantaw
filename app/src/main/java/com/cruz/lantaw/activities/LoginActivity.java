@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.cruz.lantaw.R;
@@ -35,10 +36,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int RC_SIGN_IN = 007;
 
     private GoogleApiClient mGoogleApiClient;
-    private ProgressDialog mProgressDialog;
+//    private ProgressDialog mProgressDialog;
 
     private ImageView btnSignIn;
     private Button btnSignOut;
+    private ProgressBar mProgressDialog;
+
 
     private FirebaseAuth mAuth;
 
@@ -50,10 +53,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         if(!isNetworkAvailable()){
             Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
         }
         mAuth = FirebaseAuth.getInstance();
+        mProgressDialog = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressDialog.setVisibility(View.GONE);
+
+
         btnSignIn = (ImageView) findViewById(R.id.btn_sign_in);
         btnSignOut = (Button) findViewById(R.id.btn_sign_out);
 
@@ -76,12 +84,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(!isNetworkAvailable()){
             Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
         }else {
+            mProgressDialog.setVisibility(View.VISIBLE);
+
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
             startActivityForResult(signInIntent, RC_SIGN_IN);
-//            String id= getIntent().getStringExtra("mes");
-//            Intent intent = new Intent(getBaseContext(), MovieInfoActivity.class);
-//            intent.putExtra("id", id);
-//            startActivity(intent);
 
         }
 
@@ -110,13 +116,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+
         if (requestCode == RC_SIGN_IN) {
+            mProgressDialog.setVisibility(View.VISIBLE);
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
+                mProgressDialog.setVisibility(View.GONE);
+
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
+
                 // Google Sign In failed, update UI appropriately
                 // ...
             }
@@ -145,19 +156,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage("Loading...");
-            mProgressDialog.setIndeterminate(true);
-        }
 
-        mProgressDialog.show();
     }
 
     private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
     }
 
     private void updateUI(boolean isSignedIn) {

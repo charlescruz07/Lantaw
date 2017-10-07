@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -35,6 +36,7 @@ import org.json.JSONObject;
  */
 public class UpcomingFragment extends Fragment {
 
+    private ProgressBar mProgressDialog;
 
     String movies[];
     String ids[];
@@ -70,10 +72,14 @@ public class UpcomingFragment extends Fragment {
         dialog.setCancelable(false);
         dialog.setInverseBackgroundForced(false);
         dialog.show();
-        volleyStringRequst("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
         rootView = inflater.inflate(R.layout.fragment_upcoming, container, false);
 
+        mProgressDialog = rootView.findViewById(R.id.progressBar);
+
+        volleyStringRequst("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
+
         gridView = rootView.findViewById(R.id.gridView);
+
 
 //        nextBtn = rootView.findViewById(R.id.nextBtn);
 //        prevBtn = rootView.findViewById(R.id.prevBtn);
@@ -102,11 +108,13 @@ public class UpcomingFragment extends Fragment {
     }
 
     public void volleyStringRequst(String url){
+        mProgressDialog.setVisibility(View.VISIBLE);
+
 
         String  REQUEST_TAG = "com.androidtutorialpoint.volleyStringRequest";
-        ProgressDialog progressDialog = new ProgressDialog(getContext());;
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
+//        ProgressDialog progressDialog = new ProgressDialog(getContext());;
+//        progressDialog.setMessage("Loading...");
+//        progressDialog.show();
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 url, null, new Response.Listener<JSONObject>() {
@@ -169,7 +177,8 @@ public class UpcomingFragment extends Fragment {
         });
         // Adding String request to request queue
         AppSingleton.getInstance(getContext()).addToRequestQueue(jsonObjReq, REQUEST_TAG);
-        progressDialog.hide();
+        mProgressDialog.setVisibility(View.GONE);
+
     }
 
     private boolean isNetworkAvailable() {

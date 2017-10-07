@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.cruz.lantaw.R;
 import com.cruz.lantaw.Singleton.AppSingleton;
 import com.cruz.lantaw.fragments.ReviewFragment;
+import com.cruz.lantaw.fragments.SavedFragment;
 import com.cruz.lantaw.models.Movie;
 import com.cruz.lantaw.models.Review;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,8 +55,11 @@ public class MovieInfoActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private FloatingActionButton fab;
     private String id;
+    private ProgressBar mProgressDialog;
+
 
     private DatabaseReference myRef;
+    private SavedFragment savedFragment;
 
     public static final String TAG = "movieinfoactivity";
     private FirebaseUser user;
@@ -65,11 +70,7 @@ public class MovieInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("saved").child("user");
-
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setIndeterminate(true);
-        progressDialog.show();
+        savedFragment = new SavedFragment();
 
         if(!isNetworkAvailable()){
             Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
@@ -78,6 +79,8 @@ public class MovieInfoActivity extends AppCompatActivity {
         setId(id);
 
         String id= getIntent().getStringExtra("id");
+
+
         setContentView(R.layout.activity_movie_info);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -94,6 +97,8 @@ public class MovieInfoActivity extends AppCompatActivity {
         });
 
         volleyStringRequst("https://api.cinepass.de/v4/movies/"+id+"/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
+        toggleButton(savedFragment.checkMOvie(id));
+
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -129,6 +134,10 @@ public class MovieInfoActivity extends AppCompatActivity {
         this.mImgImage = (ImageView) findViewById(R.id.movieImg);
         this.mImgPlay = (ImageView) findViewById(R.id.playBtn);
         this.mBtnSave = (Button) findViewById(R.id.Save);
+        this.mProgressDialog = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressDialog.setVisibility(View.VISIBLE);
+
+
 
         String  REQUEST_TAG = "com.androidtutorialpoint.volleyStringRequest";
 
@@ -148,19 +157,28 @@ public class MovieInfoActivity extends AppCompatActivity {
                     String runtime = obj.getString("runtime");
                     final String poster_image_thumbnail = obj.getString("poster_image_thumbnail");
                     final String id = obj.getString("id");
+                    toggleButton(savedFragment.checkMOvie(String.valueOf(id)));
 
                     mBtnSave.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            saveMovie(poster_image_thumbnail, String.valueOf(id));
+
+//                            toggleButton(String.valueOf(id));
+                            toggleButton(savedFragment.checkMOvie(id));
+                            if(savedFragment.checkMOvie(String.valueOf(id))){
+                                UnsaveMovie(String.valueOf(id));
+
+                                Toast.makeText(MovieInfoActivity.this, "Movie is unsaved!", Toast.LENGTH_SHORT).show();
+                            }else {
+                                saveMovie(poster_image_thumbnail, String.valueOf(id));
+                                Toast.makeText(MovieInfoActivity.this, "Movie Saved!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MovieInfoActivity.this, "Go to Saved movies tab to view saved movies", Toast.LENGTH_SHORT).show();
+
+                            }
+
                         }
                     });
 
-
-
-
-//                    JSONObject age_limits = obj.getJSONObject("age_limits");
-//                    int DE = age_limits.getInt("SE");
                     String date;
                     JSONObject release_dates = obj.getJSONObject("release_dates");
                     if (!release_dates.has("SE")){
@@ -219,7 +237,6 @@ public class MovieInfoActivity extends AppCompatActivity {
                     mTvTitle.setText(title);
 
                     mTvInfo.setText("Runtime: "+runtime+" mins\n"+
-//                                    "Age Limit: " + DE +"\n"+
                                     "Release Date: "+date+"\n"+"Genre: ");
 
                     for (int i = 0; i < genres.length(); i++) {
@@ -233,8 +250,6 @@ public class MovieInfoActivity extends AppCompatActivity {
 
                     mTvsypno.setText(synopsis);
                     Glide.with(getApplicationContext()).load(poster_image_thumbnail).into(mImgImage);
-
-//                    Log.d(TAG, movies[0]);
 
 
 
@@ -262,12 +277,11 @@ public class MovieInfoActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-//                VolleyLog.d(TAG, "Error: " + error.getMessage());
             }
         });
-        // Adding String request to request queue
         AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjReq, REQUEST_TAG);
-        progressDialog.hide();
+        mProgressDialog.setVisibility(View.GONE);
+
     }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
@@ -288,8 +302,21 @@ public class MovieInfoActivity extends AppCompatActivity {
         Movie movie = new Movie(poster_image_thumbnail, movieId);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        myRef.child(user.getUid().toString()).push().setValue(movie);
-//        myRef.child(user.getUid().toString()).child("name").setValue(user.getDisplayName().toString());
+        myRef.child(user.getUid().toString()).child(movieId).setValue(movie);
 
+    }
+    private void UnsaveMovie(String movieId) {
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        myRef.child(user.getUid().toString()).child(movieId).removeValue();
+
+    }
+
+    public void toggleButton(boolean id){
+        Log.e(TAG, "toggleButton: "+ id );
+        if (id){
+            mBtnSave.setText("Unsave");
+        }else {
+            mBtnSave.setText("Save");
+        }
     }
 }

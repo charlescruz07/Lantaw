@@ -13,6 +13,7 @@ public class Movie implements Parcelable{
     private String movieId;
     private String movieTitle;
     private String movieInfo;
+    private String movieReleaseDate;
 
     public Movie(String movieImg, String movieId, String movieTitle, String movieInfo) {
         this.movieImg = movieImg;
@@ -29,6 +30,22 @@ public class Movie implements Parcelable{
     public Movie(String movieImg, String movieId) {
         this.movieImg = movieImg;
         this.movieId = movieId;
+    }
+
+    public String getMovieReleaseDate() {
+        return movieReleaseDate;
+    }
+
+    public void setMovieReleaseDate(String movieReleaseDate) {
+        this.movieReleaseDate = movieReleaseDate;
+    }
+
+    public Movie(String movieImg, String movieId, String movieTitle, String movieInfo, String movieReleaseDate) {
+        this.movieImg = movieImg;
+        this.movieId = movieId;
+        this.movieTitle = movieTitle;
+        this.movieInfo = movieInfo;
+        this.movieReleaseDate = movieReleaseDate;
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
