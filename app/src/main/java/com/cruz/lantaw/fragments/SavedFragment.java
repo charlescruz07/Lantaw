@@ -15,18 +15,10 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.cruz.lantaw.R;
-import com.cruz.lantaw.Singleton.AppSingleton;
 import com.cruz.lantaw.activities.MovieInfoActivity;
 import com.cruz.lantaw.adapters.GridAdapter;
-import com.cruz.lantaw.adapters.ReviewAdapter;
 import com.cruz.lantaw.models.Movie;
-import com.cruz.lantaw.models.Review;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,12 +27,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SavedFragment extends Fragment {
 
@@ -79,7 +67,7 @@ public class SavedFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(!isNetworkAvailable()){
+                if(!isOnline()){
                     Toast.makeText(getContext(), "Network is not enabled!", Toast.LENGTH_SHORT).show();
                 }else {
                     Intent intent = new Intent(getActivity(), MovieInfoActivity.class);
@@ -133,6 +121,18 @@ public class SavedFragment extends Fragment {
         });
     }
 
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        }
+        catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
+    }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);

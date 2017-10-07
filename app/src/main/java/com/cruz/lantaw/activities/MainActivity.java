@@ -42,6 +42,7 @@ import com.qslll.library.fragments.ExpandingFragment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements ExpandingFragment.OnExpandingClickListener,GoogleApiClient.OnConnectionFailedListener  {
 
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
         vsrMovies("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
 
         if(!isNetworkAvailable()){
+        if(!isOnline()){
             Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
         }
 
@@ -154,6 +156,18 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        }
+        catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
     }
 
     private void signOut() {
