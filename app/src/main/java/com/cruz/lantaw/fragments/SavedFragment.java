@@ -40,6 +40,7 @@ public class SavedFragment extends Fragment {
     public static final String TAG = "movies";
     private View rootView;
     private GridView gridView;
+    boolean rezlt;
 
     public SavedFragment() {
     }
@@ -138,4 +139,49 @@ public class SavedFragment extends Fragment {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
+    public boolean checkMOvie(final String id){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        myRef = database.getReference("saved").child("user");
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            public ArrayList<Movie> movie;
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                this.movie = new ArrayList<>();
+                for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
+                    if (childDataSnapshot.getKey().toString().equals(user.getUid().toString())){
+                        for (DataSnapshot childDataSnapshotChildre : childDataSnapshot.getChildren()) {
+                            if (id.equals(childDataSnapshotChildre.getKey().toString())){
+                                rezlt = true;
+//                                Log.v(TAG,""+ rezlt + " duha duha duha");
+                                return;
+//                                Toast.makeText(get, rezlt[0] +"", Toast.LENGTH_SHORT).show();
+                            }else {
+                                rezlt = false;
+//                                Log.v(TAG,""+ rezlt + " duha duha duha");
+//                                Toast.makeText(getContext(), rezlt[0] +"", Toast.LENGTH_SHORT).show();
+                            }
+//                            Log.v(TAG,""+ childDataSnapshotChildre.getKey().toString() + " duha duha duha");
+//                            Log.v(TAG, "" + childDataSnapshotChildre.getKey() + ": "+childDataSnapshotChildre.child("movieImg").getValue().toString()+" tulo tulo tulo " );
+//                            this.movie.add(new Movie(childDataSnapshotChildre.child("movieImg").getValue().toString(), childDataSnapshotChildre.child("movieId").getValue().toString()));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        Log.v(TAG,""+ rezlt + " duha duha duha");
+
+        return rezlt;
+    }
+
 }
