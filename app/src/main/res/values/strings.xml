@@ -4,10 +4,13 @@
     <string name="menu_upcoming">UPCOMING</string>
     <string name="menu_showing">SHOWING</string>
     <string name="menu_search">Search</string>
+    <string name="menu_list">Users</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="upcoming">UPCOMING</string>
+    <string name="list">List of Movies</string>
     <string name="saved">SAVED</string>
     <string name="showing">SHOWING</string>
     <string name="read_more"><u>Read More</u></string>

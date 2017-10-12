@@ -23,12 +23,11 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.cruz.lantaw.R;
 import com.cruz.lantaw.Singleton.AppSingleton;
-import com.cruz.lantaw.adapters.GridAdapter;
 import com.cruz.lantaw.fragments.SavedFragment;
 import com.cruz.lantaw.fragments.ShowingFragment;
 import com.cruz.lantaw.fragments.UpcomingFragment;
+import com.cruz.lantaw.fragments.UserManager;
 import com.cruz.lantaw.models.Movie;
-import com.cruz.lantaw.models.Review;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -42,6 +41,7 @@ import com.qslll.library.fragments.ExpandingFragment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements ExpandingFragment.OnExpandingClickListener,GoogleApiClient.OnConnectionFailedListener  {
@@ -65,36 +65,37 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
 
         vsrMovies("https://api.cinepass.de/v4/movies/?apikey=465NWAaWLP4bkRQrVmArERbwwBuxxIp3");
 
-        if(!isNetworkAvailable()){
-        if(!isOnline()){
-            Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
-        }
-
-        findViews();
-        initToolbar();
-        initBottomNavigation();
-
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signOut();
+        if(!isNetworkAvailable()) {
+            if (!isOnline()) {
+                Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
             }
-        });
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame,new UpcomingFragment())
-                .commit();
+            findViews();
+            initToolbar();
+            initBottomNavigation();
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    signOut();
+                }
+            });
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-    }
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frame, new UpcomingFragment())
+                    .commit();
+
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .build();
+
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
+        }
+        }
 
     private void findViews() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -132,6 +133,13 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.frame,new ShowingFragment()
+                                )
+                                .commit();
+                        return true;
+                    case R.id.action_list:
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame,new UserManager()
                                 )
                                 .commit();
                         return true;

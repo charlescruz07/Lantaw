@@ -1,25 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cruz.lantaw.activities.Userlist"
-    android:orientation="vertical">
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="270dp"
-        android:layout_height="40dp"
-
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="20dp"
-        android:shadowColor="#A8459E"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="5"
-        android:text="Back"
-        android:textColor="#FF1938"
-        android:textSize="15sp" />
-
+    tools:context="com.cruz.lantaw.fragments.UserManager">
 
     <TextView
         android:layout_width="match_parent"
@@ -27,10 +10,10 @@
         android:text="No users found!"
         android:id="@+id/noUsersText"
         android:visibility="gone"/>
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/usersList"/>
-</LinearLayout>
+
+</RelativeLayout>
 

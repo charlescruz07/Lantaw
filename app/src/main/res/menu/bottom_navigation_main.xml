@@ -20,4 +20,11 @@
         android:icon="@drawable/ic_video_camera"
         android:title="@string/menu_showing"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_list"
+        android:enabled="true"
+        android:icon="@drawable/ic_account_circle_white"
+        android:title="@string/menu_list"
+        app:showAsAction="ifRoom" />
+
 </menu>

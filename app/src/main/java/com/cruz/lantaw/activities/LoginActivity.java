@@ -1,6 +1,5 @@
 package com.cruz.lantaw.activities;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -15,7 +14,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.cruz.lantaw.R;
+import com.cruz.lantaw.models.Users;
+import com.firebase.client.Firebase;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -29,6 +36,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -43,6 +55,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ImageView btnSignIn;
     private Button btnSignOut;
     private ProgressBar mProgressDialog;
+    DatabaseReference databaseReference;
 
 
     private FirebaseAuth mAuth;
@@ -56,32 +69,32 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
 
-        if(!isNetworkAvailable()){
-        if(!isOnline()){
-            Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
+        if(!isNetworkAvailable()) {
+            if (!isOnline()) {
+                Toast.makeText(this, "Network is not enabled!", Toast.LENGTH_SHORT).show();
+            }
+            mAuth = FirebaseAuth.getInstance();
+            mProgressDialog = (ProgressBar) findViewById(R.id.progressBar);
+            mProgressDialog.setVisibility(View.GONE);
+
+
+            btnSignIn = (ImageView) findViewById(R.id.btn_sign_in);
+            btnSignOut = (Button) findViewById(R.id.btn_sign_out);
+
+            btnSignIn.setOnClickListener(this);
+            btnSignOut.setOnClickListener(this);
+
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
         }
-        mAuth = FirebaseAuth.getInstance();
-        mProgressDialog = (ProgressBar) findViewById(R.id.progressBar);
-        mProgressDialog.setVisibility(View.GONE);
-
-
-        btnSignIn = (ImageView) findViewById(R.id.btn_sign_in);
-        btnSignOut = (Button) findViewById(R.id.btn_sign_out);
-
-        btnSignIn.setOnClickListener(this);
-        btnSignOut.setOnClickListener(this);
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
-    }
+        }
 
     private void signIn() {
         if(!isNetworkAvailable()){
@@ -129,8 +142,58 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
-            } else {
+                final String email = account.getGivenName();
 
+                databaseReference = FirebaseDatabase.getInstance().getReference("user");
+                final String key = databaseReference.push().getKey();
+                String url = "https://my-project-151421.firebaseio.com/user.json";
+
+                StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
+                    @Override
+                    public void onResponse(String s) {
+                        Firebase reference = new Firebase("https://my-project-151421.firebaseio.com/user");
+
+                        if(s.equals("null")) {
+                            reference.child(email).child("key").setValue(key);
+                            Toast.makeText(LoginActivity.this, "Successful Login", Toast.LENGTH_LONG).show();
+                            //login();
+                        }
+                        else {
+                            try {
+                                JSONObject obj = new JSONObject(s);
+
+                                if (!obj.has(email)) {
+                                    reference.child(email).child("key").setValue(key);
+                                    Toast.makeText(LoginActivity.this, "Successful Login", Toast.LENGTH_LONG).show();
+                                    Users.username= email;
+                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+                                }else{
+                                    Toast.makeText(LoginActivity.this, "Successful Login", Toast.LENGTH_LONG).show();
+                                    Users.username= email;
+                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        // pd.dismiss();
+                    }
+
+                },new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        System.out.println("" + volleyError );
+
+                    }
+                });
+                RequestQueue rQueue = Volley.newRequestQueue(LoginActivity.this);
+                rQueue.add(request);
+
+            } else {
+                Toast.makeText(LoginActivity.this, "Google Sign In failed", Toast.LENGTH_LONG).show();
                 // Google Sign In failed, update UI appropriately
                 // ...
             }
