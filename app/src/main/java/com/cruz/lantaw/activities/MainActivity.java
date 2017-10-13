@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
                                 .replace(R.id.frame,new SavedFragment())
                                 .commit();
                         return true;
+                    
                     case R.id.action_upcoming:
                         getSupportFragmentManager()
                                 .beginTransaction()
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements ExpandingFragment
                                 )
                                 .commit();
                         return true;
+
                     case R.id.action_showing:
                         getSupportFragmentManager()
                                 .beginTransaction()
