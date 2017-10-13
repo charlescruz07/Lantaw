@@ -90,9 +90,9 @@ public class ShowingFragment extends Fragment implements ExpandingFragment.OnExp
             @Override
             public void onPageSelected(int position) {
                 Log.e(TAG, "onPageSelected: " +position );
-//                Intent intent = new Intent(getActivity(), MovieInfoActivity.class);
-//                intent.putExtra("id", ids[position]);
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), MovieInfoActivity.class);
+                intent.putExtra("id", ids[position]);
+                startActivity(intent);
             }
 
             @Override
